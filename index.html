@@ -3,145 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导航面板</title>
+    <title>创作仪表盘</title>
     <style>
         :root {
-            /* 浅色模式变量 */
-            --card-bg: #f7f7f7;
-            --text-color: #333;
-            --text-light: #777;
-            --card-border: #e9e9e9;
-
-            /* 深色模式变量 (通过媒体查询激活) */
-            --dark-card-bg: #2b2b2b;
-            --dark-text-color: #e0e0e0;
-            --dark-text-light: #999;
-            --dark-card-border: #444;
+            /* 定义一个柔和、现代的调色板 */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --blue-bg: #eef2ff; --blue-icon: #4f46e5;
+            --purple-bg: #f5f3ff; --purple-icon: #7c3aed;
+            --yellow-bg: #fefce8; --yellow-icon: #ca8a04;
+            --red-bg: #fee2e2; --red-icon: #dc2626;
+            --green-bg: #f0fdf4; --green-icon: #16a34a;
+            --cyan-bg: #ecfeff; --cyan-icon: #0891b2;
+            --orange-bg: #fff7ed; --orange-icon: #ea580c;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: transparent; /* 透明背景以融入Notion */
+            background-color: var(--bg-color);
             margin: 0;
-            padding: 10px;
-        }
-        
-        .gallery-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 灵活的网格布局 */
-            gap: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
-        .nav-card {
+        .dashboard-grid {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(160px, auto);
+            gap: 20px;
+        }
+
+        .card {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            padding: 20px;
-            aspect-ratio: 1 / 1; /* 保持卡片为正方形 */
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            cursor: default;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: var(--shadow);
         }
-        
-        .nav-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
         }
+
+        /* 卡片大小 */
+        .card.wide { grid-column: span 2; }
+        .card.tall { grid-row: span 2; }
 
         .card-icon {
-            font-size: 2.5em; /* Emoji图标大小 */
-            margin-bottom: 12px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
         }
-
-        .card-title {
-            font-size: 1em;
+        .card-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .card-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1em;
             font-weight: 600;
-            color: var(--text-color);
+            color: var(--text-primary);
+        }
+        .card-content p {
             margin: 0;
-        }
-
-        .card-description {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 15px;
-            background: linear-gradient(to top, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0)); /* 白色渐变遮罩 */
-            font-size: 0.8em;
-            color: var(--text-light);
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .nav-card:hover .card-description {
-            transform: translateY(0);
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
         
         /* 适配Notion深色模式 */
         @media (prefers-color-scheme: dark) {
-            .nav-card {
-                background-color: var(--dark-card-bg);
-                border-color: var(--dark-card-border);
-            }
-            .card-title {
-                color: var(--dark-text-color);
-            }
-            .card-description {
-                color: var(--dark-text-light);
-                background: linear-gradient(to top, rgba(43, 43, 43, 1) 50%, rgba(43, 43, 43, 0)); /* 深色渐变遮罩 */
+            body { background-color: #1f1f1f; }
+            :root {
+                --bg-color: #1f1f1f;
+                --card-bg: #2b2b2b;
+                --text-primary: #f9fafb;
+                --text-secondary: #9ca3af;
+                --border-color: #374151;
             }
         }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card.wide { grid-column: span 2; }
+        }
+        @media (max-width: 480px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .card.wide, .card.tall { 
+                grid-column: span 1; 
+                grid-row: span 1;
+            }
+        }
+
     </style>
 </head>
 <body>
 
-<div class="gallery-container">
-    <!-- 第一行：宏观节律 -->
-    <div class="nav-card">
-        <div class="card-icon">🗓️</div>
-        <h3 class="card-title">周度规划</h3>
-        <div class="card-description">清空灵感，决策选题</div>
+<div class="dashboard-grid">
+    <!-- 直接将SVG代码嵌入，确保Notion能显示 -->
+    <div class="card wide">
+        <div class="card-icon" style="background-color: var(--blue-bg);">
+            <svg style="color: var(--blue-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>周度规划</h3>
+            <p>清空灵感，决策选题</p>
+        </div>
     </div>
-    <div class="nav-card">
-        <div class="card-icon">🔄</div>
-        <h3 class="card-title">月度复盘</h3>
-        <div class="card-description">回顾作品，提炼经验</div>
+    <div class="card">
+        <div class="card-icon" style="background-color: var(--purple-bg);">
+            <svg style="color: var(--purple-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>月度复盘</h3>
+            <p>回顾作品，提炼经验</p>
+        </div>
     </div>
-    <div class="nav-card">
-        <div class="card-icon">🎯</div>
-        <h3 class="card-title">抉择时刻</h3>
-        <div class="card-description">只选定一张今日卡片</div>
+    <div class="card">
+        <div class="card-icon" style="background-color: var(--yellow-bg);">
+            <svg style="color: var(--yellow-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>抉择时刻</h3>
+            <p>只选定一张今日卡片</p>
+        </div>
     </div>
-
-    <!-- 第二行：创作仪式 -->
-    <div class="nav-card">
-        <div class="card-icon">🧹</div>
-        <h3 class="card-title">清空工作台</h3>
-        <div class="card-description">关闭所有物理和数字干扰</div>
+    <div class="card">
+        <div class="card-icon" style="background-color: var(--orange-bg);">
+             <svg style="color: var(--orange-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>清空工作台</h3>
+            <p>关闭所有物理和数字干扰</p>
+        </div>
     </div>
-    <div class="nav-card">
-        <div class="card-icon">💻</div>
-        <h3 class="card-title">进入工作室</h3>
-        <div class="card-description">将卡片“以全屏方式打开”</div>
+     <div class="card">
+        <div class="card-icon" style="background-color: var(--cyan-bg);">
+             <svg style="color: var(--cyan-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>进入工作室</h3>
+            <p>将卡片“以全屏方式打开”</p>
+        </div>
     </div>
-    <div class="nav-card">
-        <div class="card-icon">✍️</div>
-        <h3 class="card-title">执行最小单元</h3>
-        <div class="card-description">从清单或大纲开始</div>
+     <div class="card">
+        <div class="card-icon" style="background-color: var(--green-bg);">
+             <svg style="color: var(--green-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>执行最小单元</h3>
+            <p>从清单或大纲开始</p>
+        </div>
     </div>
-    
-    <!-- 您可以继续添加更多卡片 -->
-    <div class="nav-card">
-        <div class="card-icon">✅</div>
-        <h3 class="card-title">完成与抽离</h3>
-        <div class="card-description">拖动卡片到下一阶段</div>
-    }
+     <div class="card">
+        <div class="card-icon" style="background-color: var(--red-bg);">
+             <svg style="color: var(--red-icon);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div class="card-content">
+            <h3>完成与抽离</h3>
+            <p>拖动卡片到下一阶段</p>
+        </div>
+    </div>
 </div>
 
 </body>
