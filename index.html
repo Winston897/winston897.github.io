@@ -3,246 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>扁平化创作工作流</title>
+    <title>导航面板</title>
     <style>
         :root {
-            --color-bg: #ffffff;
-            --color-container-bg: #f7f7f7;
-            --color-text: #333333;
-            --color-text-light: #777777;
-            --color-accent: #007aff;
-            --border-radius: 12px;
-            --border: 1px solid #e9e9e9;
+            /* 浅色模式变量 */
+            --card-bg: #f7f7f7;
+            --text-color: #333;
+            --text-light: #777;
+            --card-border: #e9e9e9;
+
+            /* 深色模式变量 (通过媒体查询激活) */
+            --dark-card-bg: #2b2b2b;
+            --dark-text-color: #e0e0e0;
+            --dark-text-light: #999;
+            --dark-card-border: #444;
         }
 
         body {
-            font-family: inherit; /* 继承Notion的字体 */
-            background-color: var(--color-bg);
-            color: var(--color-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: transparent; /* 透明背景以融入Notion */
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .flat-container {
-            width: 100%;
-            max-width: 900px;
-            background-color: var(--color-container-bg);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            border: var(--border);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: var(--border);
-        }
-        .header h1 {
-            font-size: 1.8em;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-        .tab-button {
-            padding: 8px 16px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            background-color: transparent;
-            font-size: 1em;
-            font-weight: 500;
-            color: var(--color-text-light);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-        .tab-button.active {
-            color: var(--color-accent);
-            background-color: #e5f2ff;
+            padding: 10px;
         }
         
-        .workflow-content { display: none; }
-        .workflow-content.active { display: block; }
-        
-        /* 宏观流程 */
-        .macro-flow {
-            display: flex;
-            gap: 20px;
-        }
-        .macro-card {
-            flex: 1;
-            background-color: var(--color-bg);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            border: var(--border);
-        }
-        .macro-card h3 {
-            font-size: 1.1em;
-            margin: 0 0 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .macro-card ul {
-            list-style-type: '✓  ';
-            padding-left: 20px;
-            margin: 0;
-            font-size: 0.9em;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        /* 微观流程 (核心交互部分) */
-        .micro-flow {
-            display: flex;
-            justify-content: space-around;
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 灵活的网格布局 */
             gap: 15px;
-            flex-wrap: wrap;
         }
-        .step {
-            position: relative;
-            flex: 1;
-            min-width: 150px;
-        }
-        .step-visible {
-            background-color: var(--color-bg);
-            border-radius: var(--border-radius);
-            padding: 20px 15px;
-            text-align: center;
-            border: var(--border);
-            transition: all 0.2s ease;
-            height: 100%;
+
+        .nav-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            aspect-ratio: 1 / 1; /* 保持卡片为正方形 */
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
-        .step-icon {
-            font-size: 2em; /* EMOJI大小 */
-            margin-bottom: 12px;
-        }
-        .step-title {
-            font-weight: 600;
-            font-size: 1em;
-            margin-bottom: 8px;
-        }
-        .step-action {
-            font-size: 0.8em;
-            color: var(--color-text-light);
-            line-height: 1.5;
-            padding: 0 5px;
-        }
-        .step-action b {
-            color: var(--color-text);
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
         }
 
+        .card-icon {
+            font-size: 2.5em; /* Emoji图标大小 */
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .card-description {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0)); /* 白色渐变遮罩 */
+            font-size: 0.8em;
+            color: var(--text-light);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-card:hover .card-description {
+            transform: translateY(0);
+        }
+        
+        /* 适配Notion深色模式 */
+        @media (prefers-color-scheme: dark) {
+            .nav-card {
+                background-color: var(--dark-card-bg);
+                border-color: var(--dark-card-border);
+            }
+            .card-title {
+                color: var(--dark-text-color);
+            }
+            .card-description {
+                color: var(--dark-text-light);
+                background: linear-gradient(to top, rgba(43, 43, 43, 1) 50%, rgba(43, 43, 43, 0)); /* 深色渐变遮罩 */
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="flat-container">
-    <div class="header">
-        <h1>Wintion-hao创作心流</h1>
+<div class="gallery-container">
+    <!-- 第一行：宏观节律 -->
+    <div class="nav-card">
+        <div class="card-icon">🗓️</div>
+        <h3 class="card-title">周度规划</h3>
+        <div class="card-description">清空灵感，决策选题</div>
+    </div>
+    <div class="nav-card">
+        <div class="card-icon">🔄</div>
+        <h3 class="card-title">月度复盘</h3>
+        <div class="card-description">回顾作品，提炼经验</div>
+    </div>
+    <div class="nav-card">
+        <div class="card-icon">🎯</div>
+        <h3 class="card-title">抉择时刻</h3>
+        <div class="card-description">只选定一张今日卡片</div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-button active" onclick="showWorkflow('macro', this)">宏观节律</button>
-        <button class="tab-button" onclick="showWorkflow('micro', this)">创作仪式</button>
+    <!-- 第二行：创作仪式 -->
+    <div class="nav-card">
+        <div class="card-icon">🧹</div>
+        <h3 class="card-title">清空工作台</h3>
+        <div class="card-description">关闭所有物理和数字干扰</div>
     </div>
-
-    <div class="content-wrapper">
-        <!-- 宏观工作节律 -->
-        <div id="macro-view" class="workflow-content active">
-            <div class="macro-flow">
-                <div class="macro-card">
-                    <h3>🗓️ 周度规划</h3>
-                    <ul>
-                        <li>清空灵感收件箱。</li>
-                        <li>决策并立项下周选题。</li>
-                    </ul>
-                </div>
-                <div class="macro-card">
-                    <h3>🔄 月度复盘</h3>
-                    <ul>
-                        <li>回顾已完成的作品。</li>
-                        <li>提炼经验至知识库。</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 创作心流仪式 -->
-        <div id="micro-view" class="workflow-content">
-            <div class="micro-flow">
-                <!-- 步骤 1 -->
-                <div class="step">
-                    <div class="step-visible">
-                        <div class="step-icon">🎯</div>
-                        <div class="step-title">1. 抉择时刻</div>
-                        <div class="step-action">从看板中<b>只选定一张</b>今天要攻克的卡片。</div>
-                    </div>
-                </div>
-                <!-- 步骤 2 -->
-                <div class="step">
-                    <div class="step-visible">
-                        <div class="step-icon">🧹</div>
-                        <div class="step-title">2. 清空工作台</div>
-                        <div class="step-action">关闭所有<b>物理</b>和<b>数字</b>的干扰项。</div>
-                    </div>
-                </div>
-                <!-- 步骤 3 -->
-                <div class="step">
-                    <div class="step-visible">
-                        <div class="step-icon">💻</div>
-                        <div class="step-title">3. 进入工作室</div>
-                        <div class="step-action">将选定的卡片<b>“以全屏方式打开”</b>。</div>
-                    </div>
-                </div>
-                <!-- 步骤 4 -->
-                <div class="step">
-                    <div class="step-visible">
-                        <div class="step-icon">✍️</div>
-                        <div class="step-title">4. 执行最小单元</div>
-                        <div class="step-action">聚焦模板中的<b>清单</b>或<b>大纲</b>，从最简单的一项开始。</div>
-                    </div>
-                </div>
-                <!-- 步骤 5 -->
-                <div class="step">
-                    <div class="step-visible">
-                        <div class="step-icon">✅</div>
-                        <div class="step-title">5. 完成与抽离</div>
-                        <div class="step-action">退出全屏，将卡片<b>拖到下一阶段</b>。</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="nav-card">
+        <div class="card-icon">💻</div>
+        <h3 class="card-title">进入工作室</h3>
+        <div class="card-description">将卡片“以全屏方式打开”</div>
     </div>
-</div>
-
-<script>
-    function showWorkflow(type, element) {
-        document.getElementById('macro-view').classList.remove('active');
-        document.getElementById('micro-view').classList.remove('active');
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-
-        if (type === 'macro') {
-            document.getElementById('macro-view').classList.add('active');
-        } else {
-            document.getElementById('micro-view').classList.add('active');
-        }
-        element.classList.add('active');
+    <div class="nav-card">
+        <div class="card-icon">✍️</div>
+        <h3 class="card-title">执行最小单元</h3>
+        <div class="card-description">从清单或大纲开始</div>
+    </div>
+    
+    <!-- 您可以继续添加更多卡片 -->
+    <div class="nav-card">
+        <div class="card-icon">✅</div>
+        <h3 class="card-title">完成与抽离</h3>
+        <div class="card-description">拖动卡片到下一阶段</div>
     }
-    // Initialize first tab on load
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector('.tab-button').click();
-    });
-</script>
+</div>
 
 </body>
 </html>
