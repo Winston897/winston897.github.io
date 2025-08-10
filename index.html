@@ -9,16 +9,14 @@
             --color-bg: #ffffff;
             --color-container-bg: #f7f7f7;
             --color-text: #333333;
-            --color-text-light: #888888;
-            --color-text-extra-light: #aaaaaa;
+            --color-text-light: #777777;
             --color-accent: #007aff;
-            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             --border-radius: 12px;
-            --border: 1px solid #e5e5e5;
+            --border: 1px solid #e9e9e9;
         }
 
         body {
-            font-family: var(--font-family);
+            font-family: inherit; /* 继承Notion的字体 */
             background-color: var(--color-bg);
             color: var(--color-text);
             margin: 0;
@@ -105,12 +103,12 @@
             display: flex;
             justify-content: space-around;
             gap: 15px;
-            flex-wrap: wrap; /* 自动换行 */
+            flex-wrap: wrap;
         }
         .step {
             position: relative;
             flex: 1;
-            min-width: 150px; /* 增加最小宽度以容纳更多文字 */
+            min-width: 150px;
         }
         .step-visible {
             background-color: var(--color-bg);
@@ -118,29 +116,23 @@
             padding: 20px 15px;
             text-align: center;
             border: var(--border);
-            cursor: pointer;
             transition: all 0.2s ease;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
         }
-        .step:hover .step-visible {
-            transform: translateY(-5px);
-            border-color: var(--color-accent);
-            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.1);
-        }
+        
         .step-icon {
-            width: 36px;
-            height: 36px;
-            margin: 0 auto 12px auto;
+            font-size: 2em; /* EMOJI大小 */
+            margin-bottom: 12px;
         }
         .step-title {
             font-weight: 600;
             font-size: 1em;
             margin-bottom: 8px;
         }
-        .step-action { /* 新增的动作指令样式 */
+        .step-action {
             font-size: 0.8em;
             color: var(--color-text-light);
             line-height: 1.5;
@@ -150,63 +142,13 @@
             color: var(--color-text);
         }
 
-        .step-details {
-            display: none;
-            position: absolute;
-            bottom: calc(100% + 10px);
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
-            background-color: #333;
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            padding: 15px;
-            z-index: 100;
-            text-align: center;
-        }
-        .step:hover .step-details {
-            display: block;
-        }
-        .step-details p {
-            font-size: 0.9em;
-            line-height: 1.6;
-            margin: 0;
-            font-style: italic;
-        }
-        .step-details::after { /* 小箭头 */
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
-        }
-        
-        .icon { width: 100%; height: 100%; }
-
     </style>
 </head>
 <body>
 
-<!-- SVG 图标定义 (Sprite) -->
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></symbol>
-    <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20,20H4V4H20V20Z"/><path d="M4,4 L12,12 L20,4"/></symbol>
-    <symbol id="icon-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></symbol>
-    <symbol id="icon-clean" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3,3 L21,3 L21,9 L3,9 L3,3 Z"/><path d="M3,12 L21,12 L21,18 L3,18 L3,12 Z"/><path d="M3,21 L21,21"/></symbol>
-    <symbol id="icon-focus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z"/><circle cx="12" cy="12" r="3"></circle></symbol>
-    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></symbol>
-    <symbol id="icon-complete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></symbol>
-  </defs>
-</svg>
-
 <div class="flat-container">
     <div class="header">
-        <h1>Wintion·hao创作心流</h1>
+        <h1>Wintion-hao创作心流</h1>
     </div>
 
     <div class="tabs">
@@ -219,14 +161,14 @@
         <div id="macro-view" class="workflow-content active">
             <div class="macro-flow">
                 <div class="macro-card">
-                    <h3><svg class="icon" style="width:24px; height:24px; color: #3498db;"><use xlink:href="#icon-calendar"></use></svg>周度规划</h3>
+                    <h3>🗓️ 周度规划</h3>
                     <ul>
                         <li>清空灵感收件箱。</li>
                         <li>决策并立项下周选题。</li>
                     </ul>
                 </div>
                 <div class="macro-card">
-                    <h3><svg class="icon" style="width:24px; height:24px; color: #9b59b6;"><use xlink:href="#icon-chart"></use></svg>月度复盘</h3>
+                    <h3>🔄 月度复盘</h3>
                     <ul>
                         <li>回顾已完成的作品。</li>
                         <li>提炼经验至知识库。</li>
@@ -241,47 +183,42 @@
                 <!-- 步骤 1 -->
                 <div class="step">
                     <div class="step-visible">
-                        <svg class="step-icon" style="color:#f1c40f;"><use xlink:href="#icon-target"></use></svg>
+                        <div class="step-icon">🎯</div>
                         <div class="step-title">1. 抉择时刻</div>
                         <div class="step-action">从看板中<b>只选定一张</b>今天要攻克的卡片。</div>
                     </div>
-                    <div class="step-details"><p>“我的任务不是‘写文章’，而是‘完成这张卡片’。”</p></div>
                 </div>
                 <!-- 步骤 2 -->
                 <div class="step">
                     <div class="step-visible">
-                        <svg class="step-icon" style="color:#e67e22;"><use xlink:href="#icon-clean"></use></svg>
+                        <div class="step-icon">🧹</div>
                         <div class="step-title">2. 清空工作台</div>
                         <div class="step-action">关闭所有<b>物理</b>和<b>数字</b>的干扰项。</div>
                     </div>
-                    <div class="step-details"><p>“为专注创造一个神圣的空间。”</p></div>
                 </div>
                 <!-- 步骤 3 -->
                 <div class="step">
                     <div class="step-visible">
-                        <svg class="step-icon" style="color:#1abc9c;"><use xlink:href="#icon-focus"></use></svg>
+                        <div class="step-icon">💻</div>
                         <div class="step-title">3. 进入工作室</div>
                         <div class="step-action">将选定的卡片<b>“以全屏方式打开”</b>。</div>
                     </div>
-                     <div class="step-details"><p>“进入驾驶舱，屏蔽一切噪音。”</p></div>
                 </div>
                 <!-- 步骤 4 -->
                 <div class="step">
                     <div class="step-visible">
-                        <svg class="step-icon" style="color:#2ecc71;"><use xlink:href="#icon-edit"></use></svg>
+                        <div class="step-icon">✍️</div>
                         <div class="step-title">4. 执行最小单元</div>
                         <div class="step-action">聚焦模板中的<b>清单</b>或<b>大纲</b>，从最简单的一项开始。</div>
                     </div>
-                    <div class="step-details"><p>“我只需完成眼前这块小积木。”</p></div>
                 </div>
                 <!-- 步骤 5 -->
                 <div class="step">
                     <div class="step-visible">
-                        <svg class="step-icon" style="color:#e74c3c;"><use xlink:href="#icon-complete"></use></svg>
+                        <div class="step-icon">✅</div>
                         <div class="step-title">5. 完成与抽离</div>
                         <div class="step-action">退出全屏，将卡片<b>拖到下一阶段</b>。</div>
                     </div>
-                     <div class="step-details"><p>“用一个动作奖励自己的努力。”</p></div>
                 </div>
             </div>
         </div>
